@@ -21,8 +21,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+const mongoose = require('mongoose');
+const mongoDB = 'mongodb+srv://amahovac1:ahmedoni123@cluster0.8mk1e6d.mongodb.net/EIspitWebApp?retryWrites=true&w=majority';
+mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true });
+const db = mongoose.connection; // konekcija na bazu
+db.on('connected', function () {
+  console.log('sve ok, imam konekciju na bazu');
+});
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// kreiranje modela, samo jednom se kreira jer je const logicno, najbolje je to uradit ovdje
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
