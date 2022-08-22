@@ -7,6 +7,7 @@ const cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var teacherRouter = require('./routes/teacher');
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/teacher', teacherRouter);
 
 const mongoose = require('mongoose');
 const mongoDB = 'mongodb+srv://amahovac1:ahmedoni123@cluster0.8mk1e6d.mongodb.net/EIspitWebApp?retryWrites=true&w=majority';
