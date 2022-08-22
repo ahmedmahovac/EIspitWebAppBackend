@@ -1,4 +1,5 @@
 const ExamModel = require('../models/exam')
+const QuestionModel = require('../models/question')
 
 exports.getExams = (req, res) => {
     const {id} = req.body;
@@ -15,13 +16,25 @@ exports.getExams = (req, res) => {
 }
 
 exports.addExam = (req,res) => {
-    const {id, title} = req.body;
+    const {id, title, questions} = req.body;
     ExamModel.create({title: title, _creatorId: id}, (err, exam) => {
         if(err) {
             res.sendStatus(500); // greska u bazi
         }
         else {
-            return res.json(exam);
+            // sad dodaj pitanja jer imam kreirani exam
+            questions.map((question)=>{
+                QuestionModel.create({title: question.title, text: question.questionText, _examId: exam._id},(err,newQuestion)=>{
+                    if(err) {
+                        res.sendStatus(500);
+                    }
+                    else {
+                        console.log(newQuestion);
+                    }
+                });
+            });
+            
+            return res.json(exam); // mozda da vratim i pitanja
         }
     });
 }
@@ -53,3 +66,18 @@ exports.updateExam = (req,res) => {
         }
     });
 }
+
+exports.addQuestion = (req,res) => {
+    // odvoji ovo u posebnu funkciju koja ce imat parametre jer se koristi gore i u addExam ruti, mada ovdje ova ruta nije ni potrebna al nek stoji ako zatreba
+    QuestionModel.create(req.body,(err,newQuestion)=>{
+        if(err) {
+            res.sendStatus(500);
+        }
+        else {
+            console.log(newQuestion);
+            return res.json(newQuestion);
+        }
+    });
+}
+
+
