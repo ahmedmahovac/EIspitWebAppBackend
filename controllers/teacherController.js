@@ -1,6 +1,8 @@
 const ExamModel = require('../models/exam')
 const QuestionModel = require('../models/question')
 
+
+
 exports.getExams = (req, res) => {
     const {id} = req.body;
     // necu provjeravat jel korisnik postoji jer postoji cim je ulogovan i proslo je jwt validaciju

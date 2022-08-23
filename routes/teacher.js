@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-
+const multer  = require('multer')
+const upload = multer({ dest: './public/files' })
 
 // za svaku od ruta treba mi middleware funkcija verifikacije jwt-a
 
@@ -16,5 +17,9 @@ router.delete("/exam/:id", validateJwt, deleteExam);
 router.put("/exam/:id", validateJwt, updateExam);
 
 router.post("/question", validateJwt, addQuestion);
+
+router.post("/imageUpload",upload.array("image", 10), (req,res)=>{
+    console.log(req.files);
+});
 
 module.exports = router 

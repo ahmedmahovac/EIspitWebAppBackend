@@ -127,7 +127,7 @@ exports.validateJwt = (req,res,next) => {
           }
           else {
             UserModel.create({firstName: firstName, lastName: lastName, email: email, password: hash}, (err, user)=>{
-              // ako tu dodje do greske, vrti gresku
+              // ako tu dodje do greske, vrati gresku
               if(err) {
                 res.sendStatus(500); // moze se rec serverska interna greska
               }
