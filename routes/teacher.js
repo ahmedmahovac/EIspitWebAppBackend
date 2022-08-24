@@ -1,8 +1,29 @@
 var express = require('express');
 var router = express.Router();
 const multer  = require('multer')
-const uploadImages = multer({ dest: './files/questions/images' }) // za slike vezane za sadrzaj pitanja
-const uploadPdf = multer({ dest: './files/questions/pdfs' }) // za pdfove vezane za sadrzaj pitanja
+
+
+var storageImages = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './files/questions/images')
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname)) //Appending extension
+    }
+  })
+
+
+var storagePdfs = multer.diskStorage({
+destination: function (req, file, cb) {
+    cb(null, './files/questions/pdfs')
+},
+filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)) //Appending extension
+}
+})
+
+const uploadImages = multer({ storage: storageImages }) // za slike vezane za sadrzaj pitanja
+const uploadPdf = multer({ storage: storagePdfs }) // za pdfove vezane za sadrzaj pitanja
 // za svaku od ruta treba mi middleware funkcija verifikacije jwt-a
 
 const {validateJwt} = require("../controllers/generalController");

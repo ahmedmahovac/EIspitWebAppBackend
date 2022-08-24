@@ -1,6 +1,10 @@
 const ExamModel = require('../models/exam')
 const ExamTakeModel = require('../models/examTake')
 const QuestionModel = require('../models/question')
+const ImageQuestionModel = require('../models/imageQuestion')
+const pdfQuestionModel = require('../models/pdfQuestion')
+
+path = require('path')
 
 exports.getExam = (req,res) => {
     const id = req.query.examKey;
@@ -51,4 +55,50 @@ exports.getQuestions = (req,res) => {
             return res.json(questions);
         }
     })
+}
+
+exports.getQuestionImages = (req,res) => {
+    console.log("uso");
+    ImageQuestionModel.find({_questionId: req.params.questionId}, (err, questionImages) => {
+        if(err) {
+            res.sendStatus(500);
+        }
+        // sad imam path-eve do slika
+        else {
+            questionImages.map(questionImage => {
+                // sad prodji kroz svaki i pravi fajl i salji
+                console.log(questionImage);
+                const destination = path.join(__dirname, "../", questionImage.imageDestionation);
+                res.sendFile(destination , (err) => {
+                if(!err) {
+                    console.log(err);   
+                }
+                });
+            });
+        }
+        
+    })
+}
+
+
+exports.getQuestionPdf = (req,res) => {
+        pdfQuestionModel.findOne({_questionId: req.params.questionId}, (err, questionPdf) => {
+            if(err) {
+                res.sendStatus(500);
+            }
+            else if(questionPdf!=null){
+                // sad imam path do fajla
+                console.log(questionPdf);
+                const destination = path.join(__dirname, "../", questionPdf.pdfDestionation);
+                res.sendFile(destination , (err) => {
+                if(!err) {
+                    console.log(err);   
+                }
+                });
+            }
+            else {
+                return res.json({});
+            }
+        })
+
 }

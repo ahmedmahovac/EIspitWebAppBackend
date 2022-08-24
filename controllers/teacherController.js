@@ -101,7 +101,7 @@ exports.addQuestion = (req,res) => {
 
 exports.addImageQuestions = (req,res) => {
     const {questionId} = req.body;
-    const url = req.protocol + '://' + req.get('host') + "/files/questions/images/";
+    const url = "/files/questions/images/";
     req.files.map(((file,index) => {
         ImageQuestionModel.create({imageDestionation: url+file.filename, _questionId: questionId}, (err,questionImage)=>{
             if(err) {
@@ -123,7 +123,7 @@ exports.addImageQuestions = (req,res) => {
 
 exports.addPdf = (req,res) => {
     const {questionId} = req.body;
-    const url = req.protocol + '://' + req.get('host') + "/files/questions/pdfs/";
+    const url = "/files/questions/pdfs/";
     PdfQuestionModel.create({pdfDestionation: url+req.file.filename, _questionId: questionId}, (err,pdfQuestion)=>{
         if(err) {
             res.sendStatus(500);
