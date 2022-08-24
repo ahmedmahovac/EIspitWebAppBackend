@@ -1,6 +1,6 @@
 const ExamModel = require('../models/exam')
 const QuestionModel = require('../models/question')
-
+const ImageQuestionModel = require('../models/imageQuestion')
 
 
 exports.getExams = (req, res) => {
@@ -18,25 +18,13 @@ exports.getExams = (req, res) => {
 }
 
 exports.addExam = (req,res) => {
-    const {id, title, questions} = req.body;
+    const {id, title, } = req.body; // id sam dodo u jwt
     ExamModel.create({title: title, _creatorId: id}, (err, exam) => {
         if(err) {
             res.sendStatus(500); // greska u bazi
         }
         else {
-            // sad dodaj pitanja jer imam kreirani exam
-            questions.map((question)=>{
-                QuestionModel.create({title: question.title, text: question.questionText, _examId: exam._id},(err,newQuestion)=>{
-                    if(err) {
-                        res.sendStatus(500);
-                    }
-                    else {
-                        console.log(newQuestion);
-                    }
-                });
-            });
-            
-            return res.json(exam); // mozda da vratim i pitanja
+            return res.json(exam);            
         }
     });
 }
@@ -44,12 +32,37 @@ exports.addExam = (req,res) => {
 
 exports.deleteExam = (req,res) => {
     const id = req.params.id;
-    ExamModel.deleteOne({_id : id}, (err, data) => {
+    ExamModel.deleteOne({_id : id}, (err, dataExam) => {
         if(err) {
             res.sendStatus(500);
         }
         else {
-            return res.json(data);
+            // izbrisi sva pitanja ovom exama
+            QuestionModel.find({_examId: id}, (err,questions)=>{
+                if(err){
+                    res.sendStatus(500);
+                }
+                else {
+                    QuestionModel.deleteMany({_examId: id}, (err,data)=>{
+                        if(err){
+                            res.sendStatus(500);
+                        }
+                        else {
+                            questions.map((question,index)=>{
+                                ImageQuestionModel.deleteMany({_questionId: question._id}, (err,data) => {
+                                    if(err){
+                                        res.sendStatus(500);
+                                    }
+                                    else if(index===questions.length-1){
+                                        return res.json(dataExam);
+                                    }
+                                });
+                            });
+                        }
+                    })
+
+                }
+            });
         }
     });
 }
@@ -70,16 +83,36 @@ exports.updateExam = (req,res) => {
 }
 
 exports.addQuestion = (req,res) => {
-    // odvoji ovo u posebnu funkciju koja ce imat parametre jer se koristi gore i u addExam ruti, mada ovdje ova ruta nije ni potrebna al nek stoji ako zatreba
-    QuestionModel.create(req.body,(err,newQuestion)=>{
-        if(err) {
-            res.sendStatus(500);
-        }
-        else {
-            console.log(newQuestion);
-            return res.json(newQuestion);
-        }
-    });
+    const {examId, title, text} = req.body;
+        QuestionModel.create({title: title, text: text, _examId: examId}, (err,newQuestion)=>{
+            if(err) {
+                console.log(err);
+                res.sendStatus(500);
+            }
+            else {
+                return res.json(newQuestion);
+            }  
+        });
 }
 
 
+exports.addImageQuestions = (req,res) => {
+    const {questionId} = req.body;
+    const url = req.protocol + '://' + req.get('host') + "/files/questions/images/";
+    req.files.map(((file,index) => {
+        ImageQuestionModel.create({imageDestionation: url+file.filename, _questionId: questionId}, (err,questionImage)=>{
+            if(err) {
+                res.sendStatus(500);
+            }
+            else {
+                console.log(questionImage);
+                if(index===req.files.length-1) {
+                    return res.json(questionImage); // zasad cu samo ovo slat kao info nazad
+                    // ovo je nacin da znam kad je kreiranje svih imagequestiona uspjesno
+                }
+            }
+            
+        });
+    }));
+
+}
