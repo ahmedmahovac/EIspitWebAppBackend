@@ -37,6 +37,7 @@ exports.deleteExam = (req,res) => {
             res.sendStatus(500);
         }
         else {
+            res.json(dataExam); // ne returnam jer ce se inace izac iz funkcije i nece se obrisat dependencies
             // izbrisi sva pitanja ovom exama
             QuestionModel.find({_examId: id}, (err,questions)=>{
                 if(err){
@@ -52,9 +53,6 @@ exports.deleteExam = (req,res) => {
                                 ImageQuestionModel.deleteMany({_questionId: question._id}, (err,data) => {
                                     if(err){
                                         res.sendStatus(500);
-                                    }
-                                    else if(index===questions.length-1){
-                                        return res.json(dataExam);
                                     }
                                 });
                             });
@@ -114,5 +112,10 @@ exports.addImageQuestions = (req,res) => {
             
         });
     }));
+
+}
+
+
+exports.addPdf = (req,res) => {
 
 }
