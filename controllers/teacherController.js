@@ -1,7 +1,7 @@
 const ExamModel = require('../models/exam')
 const QuestionModel = require('../models/question')
 const ImageQuestionModel = require('../models/imageQuestion')
-
+const PdfQuestionModel = require('../models/pdfQuestion')
 
 exports.getExams = (req, res) => {
     const {id} = req.body;
@@ -51,6 +51,11 @@ exports.deleteExam = (req,res) => {
                         else {
                             questions.map((question,index)=>{
                                 ImageQuestionModel.deleteMany({_questionId: question._id}, (err,data) => {
+                                    if(err){
+                                        res.sendStatus(500);
+                                    }
+                                });
+                                PdfQuestionModel.deleteMany({_questionId: question._id}, (err,data) => {
                                     if(err){
                                         res.sendStatus(500);
                                     }
@@ -105,7 +110,7 @@ exports.addImageQuestions = (req,res) => {
             else {
                 console.log(questionImage);
                 if(index===req.files.length-1) {
-                    return res.json(questionImage); // zasad cu samo ovo slat kao info nazad
+                    return res.json(questionImage); // zasad cu samo ovo slat kao info nazad /// ovo salje samo zadnji uploadovani
                     // ovo je nacin da znam kad je kreiranje svih imagequestiona uspjesno
                 }
             }
@@ -117,5 +122,15 @@ exports.addImageQuestions = (req,res) => {
 
 
 exports.addPdf = (req,res) => {
-
+    const {questionId} = req.body;
+    const url = req.protocol + '://' + req.get('host') + "/files/questions/pdfs/";
+    PdfQuestionModel.create({pdfDestionation: url+req.file.filename, _questionId: questionId}, (err,pdfQuestion)=>{
+        if(err) {
+            res.sendStatus(500);
+        }
+        else {
+            console.log(pdfQuestion);
+            return res.json(pdfQuestion);
+        }
+    });
 }
