@@ -2,6 +2,7 @@ const ExamModel = require('../models/exam')
 const QuestionModel = require('../models/question')
 const ImageQuestionModel = require('../models/imageQuestion')
 const PdfQuestionModel = require('../models/pdfQuestion')
+const ExamTakeModel = require('../models/examTake')
 
 exports.getExams = (req, res) => {
     const {id} = req.body;
@@ -66,6 +67,14 @@ exports.deleteExam = (req,res) => {
 
                 }
             });
+            ExamTakeModel.deleteMany({_examId: id}, (err, data) => {
+                if(err) {
+                    res.sendStatus(500);
+                }
+                else {
+                    res.sendStatus(500);
+                }
+            })
         }
     });
 }
@@ -86,8 +95,8 @@ exports.updateExam = (req,res) => {
 }
 
 exports.addQuestion = (req,res) => {
-    const {examId, title, text} = req.body;
-        QuestionModel.create({title: title, text: text, _examId: examId}, (err,newQuestion)=>{
+    const {examId, title, text, pdfIncluded, imagesIncluded} = req.body;
+        QuestionModel.create({title: title, text: text, _examId: examId, pdfIncluded: pdfIncluded, imagesIncluded: imagesIncluded}, (err,newQuestion)=>{
             if(err) {
                 console.log(err);
                 res.sendStatus(500);

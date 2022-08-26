@@ -13,6 +13,14 @@ const QuestionSchema = new Schema({
     text: {
         type: String
     },
+    pdfIncluded: {
+        type: Boolean,
+        required: [true, "pdfIncluded attribute must be set."]
+    },
+    imagesIncluded: {
+        type: Boolean,
+        required: [true, "imagesIncluded attribute must be set."]
+    },
     // jos kako cu dodat pdf, slike
     _examId: {
         type: Schema.Types.ObjectId,

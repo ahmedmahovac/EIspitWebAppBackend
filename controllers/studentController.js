@@ -32,6 +32,7 @@ exports.getExam = (req,res) => {
 }
 
 
+
 exports.takeExam = (req,res) => {
     const {firstName, lastName, email, index, examKey} = req.body;
     ExamTakeModel.create({firstName: firstName, lastName: lastName, email: email, index: index, _examId: examKey}, (err, examTake)=>{
@@ -57,27 +58,16 @@ exports.getQuestions = (req,res) => {
     })
 }
 
-exports.getQuestionImages = (req,res) => {
-    console.log("uso");
-    ImageQuestionModel.find({_questionId: req.params.questionId}, (err, questionImages) => {
-        if(err) {
-            res.sendStatus(500);
+exports.getQuestionImage = (req,res) => {
+    const imageQuestionId = req.params.imageQuestionId;
+    ImageQuestionModel.findOne({_id: imageQuestionId}, (err, questionImage)=>{
+        const destination = path.join(__dirname, "../", questionImage.imageDestionation);
+        res.sendFile(destination , (err) => {
+        if(!err) {
+            console.log(err);   
         }
-        // sad imam path-eve do slika
-        else {
-            questionImages.map(questionImage => {
-                // sad prodji kroz svaki i pravi fajl i salji
-                console.log(questionImage);
-                const destination = path.join(__dirname, "../", questionImage.imageDestionation);
-                res.sendFile(destination , (err) => {
-                if(!err) {
-                    console.log(err);   
-                }
-                });
-            });
-        }
-        
-    })
+        });
+    });
 }
 
 
@@ -101,4 +91,18 @@ exports.getQuestionPdf = (req,res) => {
             }
         })
 
+}
+
+
+exports.getQuestionImageObjects = (req,res) => {
+    console.log(req.params.questionId);
+        ImageQuestionModel.find({_questionId: req.params.questionId}, (err, questionImages) => {
+        if(err) {
+            res.sendStatus(500);
+        }
+        // sad imam path-eve do slika
+        else {
+            return res.json(questionImages);
+        }
+    });
 }
