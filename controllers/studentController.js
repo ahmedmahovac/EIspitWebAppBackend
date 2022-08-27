@@ -37,11 +37,11 @@ exports.getExam = (req,res) => {
 
 exports.takeExam = (req,res) => {
     const {firstName, lastName, email, index, examKey} = req.body;
-    ExamTakeModel.find({email: email, _examId: examKey}, (err, examTake) => {
+    ExamTakeModel.findOne({email: email, _examId: examKey}, (err, examTake) => { // find ne vraca null ako ne nadje, findOne vraca
         if(err){
             res.sendStatus(500);
         }
-        else if(examTake != null) {
+        else if(examTake !== null) {
             return res.json(examTake); // student sa ovim emailom je vec prijavljen, vidi sta ces ovdje uradit, zasad vrati isti exam
         }
         else {
@@ -149,4 +149,63 @@ exports.addAnswerImages = (req,res) => {
             
         });
     }));
+}
+
+
+
+exports.getAnswers = (req,res) => {
+    const {examTakeId} = req.params;
+    AnswerModel.find({_examTakeId: examTakeId}, (err,answers)=> {
+        if(err){
+            res.sendStatus(500);
+        }
+        else {
+            return res.json(answers);
+        }
+    });
+}
+
+exports.getImageAnswers = (req,res) => {
+    const {answerId} = req.params;
+    ImageAnswerModel.find({_answerId: answerId}, (err, imageAnswers)=>{
+        if(err){
+            res.sendStatus(500);
+        }
+        else {
+            return res.json(imageAnswers);
+        }
+    });
+}
+
+exports.getAnswerImage = (req,res) => {
+    const {imageAnswerId} = req.params;
+    ImageAnswerModel.findOne({_id: imageAnswerId}, (err, answerImage)=>{
+        const destination = path.join(__dirname, "../", answerImage.imageDestination);
+        res.sendFile(destination , (err) => {
+        if(!err) {
+            console.log(err);   
+        }
+        });
+    });
+}
+
+
+exports.getQuestionImageTemporary = (req,res) => {
+    ImageQuestionModel.findOne({_questionId: req.params.questionId}, (err, questionImage) => {
+        if(err) {
+            res.sendStatus(500);
+        }
+        // sad imam path-eve do slika
+        else {
+            if(questionImage===null) {
+                return res.json({});
+            }
+            const destination = path.join(__dirname, "../", questionImage.imageDestionation);
+            res.sendFile(destination , (err) => {
+            if(!err) {
+                console.log(err);   
+            }
+            });
+        }
+    });
 }

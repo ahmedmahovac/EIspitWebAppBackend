@@ -18,7 +18,7 @@ const uploadImages = multer({ storage: storageImages, onError : function(err, ne
     next(err);
   } }) // za slike vezane za odgovore
 
-const {getExam, takeExam, getQuestions, getQuestionImage, getQuestionPdf, getQuestionImageObjects, createAnswer, addAnswerImages,} = require("../controllers/studentController");
+const {getExam, takeExam, getQuestions, getQuestionImage, getQuestionPdf, getQuestionImageObjects, createAnswer, addAnswerImages,getAnswers, getImageAnswers, getAnswerImage, getQuestionImageTemporary} = require("../controllers/studentController");
 
 router.get("/exam", getExam); // korisnik ne treba bit logovan
 
@@ -30,10 +30,18 @@ router.get("/imageQuestions/:questionId", getQuestionImageObjects);
 
 router.get("/imageQuestion/:imageQuestionId", getQuestionImage);
 
+router.get("/imageQuestionTemporary/:questionId", getQuestionImageTemporary);
+
 router.get("/pdfQuestion/:questionId", getQuestionPdf);
 
 router.post("/answer/:questionId/:examTakeId", createAnswer);
 
 router.post("/answerImages", uploadImages.array("imageAnswer"), addAnswerImages);
+
+router.get("/answers/:examTakeId", getAnswers);
+
+router.get("/imageAnswers/:answerId", getImageAnswers);
+
+router.get("/imageAnswer/:imageAnswerId", getAnswerImage);
 
 module.exports = router
