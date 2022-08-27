@@ -3,6 +3,8 @@ const ExamTakeModel = require('../models/examTake')
 const QuestionModel = require('../models/question')
 const ImageQuestionModel = require('../models/imageQuestion')
 const pdfQuestionModel = require('../models/pdfQuestion')
+const AnswerModel = require('../models/answer');
+const ImageAnswerModel = require('../models/imageAnswer')
 
 path = require('path')
 
@@ -35,14 +37,24 @@ exports.getExam = (req,res) => {
 
 exports.takeExam = (req,res) => {
     const {firstName, lastName, email, index, examKey} = req.body;
-    ExamTakeModel.create({firstName: firstName, lastName: lastName, email: email, index: index, _examId: examKey}, (err, examTake)=>{
-        if(err) {
+    ExamTakeModel.find({email: email, _examId: examKey}, (err, examTake) => {
+        if(err){
             res.sendStatus(500);
         }
-        else {
-            return res.json(examTake);
+        else if(examTake != null) {
+            return res.json(examTake); // student sa ovim emailom je vec prijavljen, vidi sta ces ovdje uradit, zasad vrati isti exam
         }
-    });
+        else {
+            ExamTakeModel.create({firstName: firstName, lastName: lastName, email: email, index: index, _examId: examKey}, (err, examTake)=>{
+                if(err) {
+                    res.sendStatus(500);
+                }
+                else {
+                    return res.json(examTake);
+                }
+            });
+        }
+    })
 }
 
 
@@ -69,9 +81,9 @@ exports.getQuestionImage = (req,res) => {
         });
     });
 }
+ 
 
-
-exports.getQuestionPdf = (req,res) => {
+exports.getQuestionPdf = (req,res) => { 
         pdfQuestionModel.findOne({_questionId: req.params.questionId}, (err, questionPdf) => {
             if(err) {
                 res.sendStatus(500);
@@ -95,7 +107,6 @@ exports.getQuestionPdf = (req,res) => {
 
 
 exports.getQuestionImageObjects = (req,res) => {
-    console.log(req.params.questionId);
         ImageQuestionModel.find({_questionId: req.params.questionId}, (err, questionImages) => {
         if(err) {
             res.sendStatus(500);
@@ -105,4 +116,37 @@ exports.getQuestionImageObjects = (req,res) => {
             return res.json(questionImages);
         }
     });
+}
+
+exports.createAnswer = (req,res) => {
+    const {questionId, examTakeId} = req.params;
+    AnswerModel.create({_examTakeId: examTakeId, _questionId: questionId}, (err, answer) => {
+        if(err){
+            res.sendStatus(500);
+        }
+        else{
+            return res.json({answerId: answer._id});
+        }
+    });
+}
+
+
+exports.addAnswerImages = (req,res) => {
+    const {answerId} = req.body;
+    const url = "/files/answers/images/";
+    req.files.map(((file,index) => {
+        ImageAnswerModel.create({imageDestination: url+file.filename, _answerId: answerId}, (err,answerImage)=>{
+            if(err) {
+                res.sendStatus(500);
+            }
+            else {
+                if(index===req.files.length-1) {
+                    return res.json(answerImage); // zasad cu samo ovo slat kao info nazad /// ovo salje samo zadnji uploadovani
+                    // ovo je nacin da znam kad je kreiranje svih answerImage uspjesno
+                    // ovo salje samo zadnji kreirani answerImage nazad
+                }
+            }
+            
+        });
+    }));
 }

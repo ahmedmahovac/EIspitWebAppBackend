@@ -71,9 +71,6 @@ exports.deleteExam = (req,res) => {
                 if(err) {
                     res.sendStatus(500);
                 }
-                else {
-                    res.sendStatus(500);
-                }
             })
         }
     });
@@ -142,4 +139,16 @@ exports.addPdf = (req,res) => {
             return res.json(pdfQuestion);
         }
     });
+}
+
+exports.getExamTakes = (req,res) => {
+    console.log("uso");
+    ExamTakeModel.find({_examId: req.params.examId}, (err, examTakes) => {
+        if(err){
+            res.sendStatus(500);
+        }
+        else {
+            res.json(examTakes);
+        }
+    })
 }
