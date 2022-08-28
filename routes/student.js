@@ -2,13 +2,18 @@ var express = require('express');
 var router = express.Router();
 const multer  = require('multer')
 
+var intformat = require('biguint-format')
+    , FlakeId = require('flake-idgen')
+ 
+var flakeIdGen = new FlakeId();
+
 
 var storageImages = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './files/answers/images')
     },
     filename: function (req, file, cb) {
-      cb(null, Date.now() + ".png") //Appending extension
+      cb(null, intformat(flakeIdGen.next(), "dec") + Date.now() + ".png") //Appending extension
     }
     // path.extname(file.originalname)
   })
