@@ -3,6 +3,8 @@ const QuestionModel = require('../models/question')
 const ImageQuestionModel = require('../models/imageQuestion')
 const PdfQuestionModel = require('../models/pdfQuestion')
 const ExamTakeModel = require('../models/examTake')
+const AnswerModel = require('../models/answer')
+const Annotations = require('../models/annotations')
 
 exports.getExams = (req, res) => {
     const {id} = req.body;
@@ -142,7 +144,6 @@ exports.addPdf = (req,res) => {
 }
 
 exports.getExamTakes = (req,res) => {
-    console.log("uso");
     ExamTakeModel.find({_examId: req.params.examId}, (err, examTakes) => {
         if(err){
             res.sendStatus(500);
@@ -151,4 +152,32 @@ exports.getExamTakes = (req,res) => {
             res.json(examTakes);
         }
     })
+}
+
+
+exports.submitAnswerReview = (req,res) => {
+    console.log("uso");
+    const {answerId, points, comment} = req.body;
+    AnswerModel.findOneAndUpdate({_id: answerId}, {points: points, teacherComment: comment, reviewed: true}, (err,data)=>{
+        if(err){
+            res.sendStatus(500);
+        }
+        else{
+            console.log("uspjesno obavljeno");
+            return res.json(data);
+        }
+    })
+}
+
+exports.submitAnnotations = (req,res) => {
+    console.log("uso u submit annotations");
+    const {imageAnswerId, annotations} = req.body;
+    Annotations.create({_imageAnswerId: imageAnswerId, data: JSON.stringify(annotations)}, (err, annotations)=>{
+        if(err){
+            res.sendStatus(500);
+        }
+        else {
+            return res.json(annotations);
+        }
+    });
 }

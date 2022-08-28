@@ -20,6 +20,18 @@ const AnswerSchema = new Schema({
     createdTime: {
         type: Date,
         default: Date.now() // ovo ce vjv svaki put kad se pristupi dodijelit novi datum, sto nam ne treba
+    },
+    reviewed: {
+        type: Boolean,
+        default: false
+    },
+    teacherComment: {
+        type: String,
+        default: ""
+    },
+    points: {
+        type: Number,
+        default: 0
     }
 }); 
 
