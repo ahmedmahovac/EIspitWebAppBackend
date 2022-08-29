@@ -181,3 +181,16 @@ exports.submitAnnotations = (req,res) => {
         }
     });
 }
+
+
+exports.changeInsightOpen = (req,res) => {
+    const {open, examId} = req.body;
+    ExamModel.findOneAndUpdate({_id: examId}, {insightOpen: open}, (err,data)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            return res.json(data);
+        }
+    });
+}

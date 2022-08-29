@@ -27,7 +27,7 @@ const uploadPdf = multer({ storage: storagePdfs }) // za pdfove vezane za sadrza
 // za svaku od ruta treba mi middleware funkcija verifikacije jwt-a
 
 const {validateJwt} = require("../controllers/generalController");
-const {getExams, addExam, deleteExam, updateExam, addQuestion, addImageQuestions, addPdf, getExamTakes, submitAnswerReview, submitAnnotations} = require("../controllers/teacherController");
+const {getExams, addExam, deleteExam, updateExam, addQuestion, addImageQuestions, addPdf, getExamTakes, submitAnswerReview, submitAnnotations, changeInsightOpen} = require("../controllers/teacherController");
 
 router.get("/getExams", validateJwt, getExams); // promijeni naziv rute po uzoru na konvenciju koju sam skrinao
 
@@ -47,6 +47,8 @@ router.get("/examTakes/:examId", getExamTakes);
 
 router.post("/answerReview/", submitAnswerReview);
 
-router.post("/teacher/imageAnswer", submitAnnotations);
+router.post("/imageAnswer", submitAnnotations);
+
+router.post("/exam/insight/", changeInsightOpen);
 
 module.exports = router 

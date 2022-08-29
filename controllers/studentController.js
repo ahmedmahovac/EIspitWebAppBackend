@@ -5,6 +5,8 @@ const ImageQuestionModel = require('../models/imageQuestion')
 const pdfQuestionModel = require('../models/pdfQuestion')
 const AnswerModel = require('../models/answer');
 const ImageAnswerModel = require('../models/imageAnswer')
+const Annotations = require('../models/annotations')
+
 
 path = require('path')
 
@@ -208,4 +210,52 @@ exports.getQuestionImageTemporary = (req,res) => {
             });
         }
     });
+}
+
+
+exports.getExamTakeId = (req,res) => {
+    const id = req.query.insightKey;
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        // Yes, it's a valid ObjectId, proceed with `findById` call.
+        res.sendStatus(404);
+    }
+    else {
+        ExamTakeModel.findById(id, (err, examTake) =>{ 
+            if(err) {
+                console.log(err);
+                res.sendStatus(500);
+            }
+            else if(!examTake) {
+                res.sendStatus(404);
+            }
+            else {
+                ExamModel.find({_id: examTake._examId}, (err, exam)=>{ // provjera jel otvoren pregled 
+                    if(err) {
+                        res.sendStatus(500);
+                    }
+                    else{
+                        if(!exam.insightOpen) {
+                            res.sendStatus(451);
+                        }
+                        else{
+                            return res.json({insightKey: examTake._id}); // nek frontend ima uvid da je insightKey nesto razlicito od id-a, neptorebno mu je slat ostale informacije
+                        }
+                    }
+                })
+            }
+        });
+    }
+}
+
+
+exports.getAnnotations = (req,res) => {
+    const {imageAnswerId} = req.params;
+    Annotations.find({_imageAnswerId: imageAnswerId}, (err, annotations)=>{
+        if(err){
+            res.sendStatus(500);
+        }
+        else{
+            res.send(annotations.data); // mogu direktno vratit json, samo da nadjem metodu
+        }
+    })
 }

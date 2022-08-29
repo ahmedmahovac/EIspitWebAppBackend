@@ -23,7 +23,7 @@ const uploadImages = multer({ storage: storageImages, onError : function(err, ne
     next(err);
   } }) // za slike vezane za odgovore
 
-const {getExam, takeExam, getQuestions, getQuestionImage, getQuestionPdf, getQuestionImageObjects, createAnswer, addAnswerImages,getAnswers, getImageAnswers, getAnswerImage, getQuestionImageTemporary} = require("../controllers/studentController");
+const {getExam, takeExam, getQuestions, getQuestionImage, getQuestionPdf, getQuestionImageObjects, createAnswer, addAnswerImages,getAnswers, getImageAnswers, getAnswerImage, getQuestionImageTemporary, getExamTakeId, getAnnotations} = require("../controllers/studentController");
 
 router.get("/exam", getExam); // korisnik ne treba bit logovan
 
@@ -48,5 +48,9 @@ router.get("/answers/:examTakeId", getAnswers);
 router.get("/imageAnswers/:answerId", getImageAnswers);
 
 router.get("/imageAnswer/:imageAnswerId", getAnswerImage);
+
+router.get("/student", getExamTakeId)
+
+router.get("/annotations/:imageAnswerId", getAnnotations);
 
 module.exports = router

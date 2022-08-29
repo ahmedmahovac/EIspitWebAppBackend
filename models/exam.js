@@ -19,6 +19,10 @@ const ExamSchema = new Schema({
         required: [true, "Creator id must be set."],
         ref: "User"
     },
+    insightOpen: {
+        type:Boolean,
+        default: false
+    },
     createdTime: {
         type: Date,
         default: Date.now() // ovo ce vjv svaki put kad se pristupi dodijelit novi datum, sto nam ne treba
