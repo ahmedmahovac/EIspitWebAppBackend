@@ -4,7 +4,8 @@ const ImageQuestionModel = require('../models/imageQuestion')
 const PdfQuestionModel = require('../models/pdfQuestion')
 const ExamTakeModel = require('../models/examTake')
 const AnswerModel = require('../models/answer')
-const Annotations = require('../models/annotations')
+const AnnotationsModel = require('../models/annotations')
+const ImageAnswerModel = require('../models/imageAnswer')
 
 exports.getExams = (req, res) => {
     const {id} = req.body;
@@ -61,6 +62,23 @@ exports.deleteExam = (req,res) => {
                                 PdfQuestionModel.deleteMany({_questionId: question._id}, (err,data) => {
                                     if(err){
                                         res.sendStatus(500);
+                                    }
+                                });
+                                AnswerModel.findOne({_questionId: question._id}, (err,answer) => {
+                                    if(err){
+                                        res.sendStatus(500);
+                                    }
+                                    else{
+                                        AnswerModel.deleteMany({_questionId: question._id}, (err,data) => {
+                                            if(err){
+                                                res.sendStatus(500);
+                                            }
+                                        });
+                                        ImageAnswerModel.deleteMany({_answerId: answer._id}, (err,data)=>{
+                                            if(err){
+                                                res.sendStatus(500);
+                                            }
+                                        });
                                     }
                                 });
                             });
@@ -172,7 +190,7 @@ exports.submitAnswerReview = (req,res) => {
 exports.submitAnnotations = (req,res) => {
     console.log("uso u submit annotations");
     const {imageAnswerId, annotations} = req.body;
-    Annotations.create({_imageAnswerId: imageAnswerId, data: JSON.stringify(annotations)}, (err, annotations)=>{
+    AnnotationsModel.create({_imageAnswerId: imageAnswerId, data: JSON.stringify(annotations)}, (err, annotations)=>{
         if(err){
             res.sendStatus(500);
         }

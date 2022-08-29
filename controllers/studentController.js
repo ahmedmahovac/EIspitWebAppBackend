@@ -5,7 +5,7 @@ const ImageQuestionModel = require('../models/imageQuestion')
 const pdfQuestionModel = require('../models/pdfQuestion')
 const AnswerModel = require('../models/answer');
 const ImageAnswerModel = require('../models/imageAnswer')
-const Annotations = require('../models/annotations')
+const AnnotationsModel = require('../models/annotations')
 
 
 path = require('path')
@@ -250,7 +250,7 @@ exports.getExamTakeId = (req,res) => {
 
 exports.getAnnotations = (req,res) => {
     const {imageAnswerId} = req.params;
-    Annotations.find({_imageAnswerId: imageAnswerId}, (err, annotations)=>{
+    AnnotationsModel.find({_imageAnswerId: imageAnswerId}, (err, annotations)=>{
         if(err){
             res.sendStatus(500);
         }
