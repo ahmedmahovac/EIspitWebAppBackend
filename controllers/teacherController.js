@@ -74,11 +74,29 @@ exports.deleteExam = (req,res) => {
                                                 res.sendStatus(500);
                                             }
                                         });
-                                        ImageAnswerModel.deleteMany({_answerId: answer._id}, (err,data)=>{
+
+
+                                        ImageAnswerModel.find({_answerId: answer._id}, (err,imageAnswers)=>{
                                             if(err){
                                                 res.sendStatus(500);
                                             }
-                                        });
+                                            else{
+                                                ImageAnswerModel.deleteMany({_answerId: answer._id}, (err,data)=>{
+                                                    if(err){
+                                                        res.sendStatus(500);
+                                                    }
+                                                });
+                                                imageAnswers.map((imageAnswer,index)=>{
+                                                    AnnotationsModel.deleteMany({_imageAnswerId: imageAnswer._id}, (err,data)=>{
+                                                        if(err){
+                                                            res.sendStatus(500);
+                                                        }
+                                                    });
+                                                });
+                                            }
+                                        })
+                                
+
                                     }
                                 });
                             });
@@ -188,7 +206,6 @@ exports.submitAnswerReview = (req,res) => {
 }
 
 exports.submitAnnotations = (req,res) => {
-    console.log("uso u submit annotations");
     const {imageAnswerId, annotations} = req.body;
     AnnotationsModel.create({_imageAnswerId: imageAnswerId, data: JSON.stringify(annotations)}, (err, annotations)=>{
         if(err){

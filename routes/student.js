@@ -49,7 +49,7 @@ router.get("/imageAnswers/:answerId", getImageAnswers);
 
 router.get("/imageAnswer/:imageAnswerId", getAnswerImage);
 
-router.get("/student", getExamTakeId)
+router.get("/student", getExamTakeId);
 
 router.get("/annotations/:imageAnswerId", getAnnotations);
 

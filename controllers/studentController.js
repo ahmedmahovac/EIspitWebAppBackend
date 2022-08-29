@@ -234,7 +234,7 @@ exports.getExamTakeId = (req,res) => {
                         res.sendStatus(500);
                     }
                     else{
-                        if(!exam.insightOpen) {
+                        if(exam.insightOpen===false) {
                             res.sendStatus(451);
                         }
                         else{
@@ -250,12 +250,12 @@ exports.getExamTakeId = (req,res) => {
 
 exports.getAnnotations = (req,res) => {
     const {imageAnswerId} = req.params;
-    AnnotationsModel.find({_imageAnswerId: imageAnswerId}, (err, annotations)=>{
+    AnnotationsModel.findOne({_imageAnswerId: imageAnswerId}, (err, annotations)=>{
         if(err){
             res.sendStatus(500);
         }
         else{
-            res.send(annotations.data); // mogu direktno vratit json, samo da nadjem metodu
+            res.send(annotations.data); // ovo je vec json, u respondu klijenta se automatski pretvara u objekat
         }
     })
 }
