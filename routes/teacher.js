@@ -20,16 +20,18 @@ destination: function (req, file, cb) {
 filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname)) //Appending extension
 }
-})
+}) 
 
 const uploadImages = multer({ storage: storageImages }) // za slike vezane za sadrzaj pitanja
 const uploadPdf = multer({ storage: storagePdfs }) // za pdfove vezane za sadrzaj pitanja
 // za svaku od ruta treba mi middleware funkcija verifikacije jwt-a
 
 const {validateJwt} = require("../controllers/generalController");
-const {getExams, addExam, deleteExam, updateExam, addQuestion, addImageQuestions, addPdf, getExamTakes, submitAnswerReview, submitAnnotations, changeInsightOpen} = require("../controllers/teacherController");
+const {getExams, addExam, deleteExam, updateExam, addQuestion, addImageQuestions, addPdf, getExamTakes, submitAnswerReview, submitAnnotations, changeInsightOpen, getExamDuration} = require("../controllers/teacherController");
 
-router.get("/getExams", validateJwt, getExams); // promijeni naziv rute po uzoru na konvenciju koju sam skrinao
+router.get("/getExams",validateJwt, getExams); // promijeni naziv rute po uzoru na konvenciju koju sam skrinao
+
+router.get("/examDuration/:id", getExamDuration);
 
 router.post("/addExam", validateJwt, addExam);// dodaje samo ispit i pitanja, ne slike sa pitanjima. 
 

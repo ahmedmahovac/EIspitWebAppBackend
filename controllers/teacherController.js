@@ -16,14 +16,31 @@ exports.getExams = (req, res) => {
             res.sendStatus(500);
         }
         else {
+            console.log(exams);
             return res.json(exams);
         }
     })
 }
 
+exports.getExamDuration = (req,res) => {
+    const {id} = req.params;
+    ExamModel.findOne({_id: id}, (err,exam)=>{
+        if(err){
+            res.sendStatus(500);
+        }
+        else if(!exam){
+            res.sendStatus(404); // not found
+        }
+        else{
+            return res.json({duration: exam.duration});
+        }
+    });
+}
+
+
 exports.addExam = (req,res) => {
-    const {id, title, } = req.body; // id sam dodo u jwt
-    ExamModel.create({title: title, _creatorId: id}, (err, exam) => {
+    const {id, title, duration} = req.body; // id sam dodo u jwt
+    ExamModel.create({title: title, _creatorId: id, duration: duration}, (err, exam) => {
         if(err) {
             res.sendStatus(500); // greska u bazi
         }
@@ -81,6 +98,8 @@ exports.deleteExam = (req,res) => {
                                                 res.sendStatus(500);
                                             }
                                             else{
+                                                console.log("ok brise");
+                                                console.log(imageAnswers);
                                                 ImageAnswerModel.deleteMany({_answerId: answer._id}, (err,data)=>{
                                                     if(err){
                                                         res.sendStatus(500);
@@ -117,7 +136,7 @@ exports.deleteExam = (req,res) => {
 
 exports.updateExam = (req,res) => {
     const id = req.params.id;
-    ExamModel.findByIdAndUpdate(id, req.body, (err, data) => { // ovo data ima prijanju neupdateovanu vrijednost
+    ExamModel.findByIdAndUpdate(id, {...req.body, openedTime: Date.now()}, (err, data) => { // ovo data ima prijanju neupdateovanu vrijednost
         // mogu poslat neke indikatore frontendu na osnovu ovoga sto je u sadrzaju data objekta, u vidu statusa, a mogu i ovako cijeli data poslat ha ja 
         if(err) {
             res.sendStatus(500);

@@ -26,6 +26,13 @@ const ExamSchema = new Schema({
     createdTime: {
         type: Date,
         default: Date.now() // ovo ce vjv svaki put kad se pristupi dodijelit novi datum, sto nam ne treba
+    },
+    duration: {
+        type: Number,
+        required: [true, "Exam duration must be set."]
+    },
+    openedTime: {
+        type: Date,
     }
 }); 
 

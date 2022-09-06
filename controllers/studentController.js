@@ -29,7 +29,7 @@ exports.getExam = (req,res) => {
                     res.sendStatus(451);
                 }
             else {
-                    return res.json({examKey: exam._id}); // nek frontend ima uvid da je examKey nesto razlicito od id-a, neptorebno mu je slat ostale informacije
+                    return res.json({examKey: exam._id, openedTime: exam.openedTime, duration: exam.duration}); // nek frontend ima uvid da je examKey nesto razlicito od id-a, neptorebno mu je slat ostale informacije
             }
         });
     }
