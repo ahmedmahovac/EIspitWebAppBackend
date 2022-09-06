@@ -20,9 +20,7 @@ router.post("/login", login);
 router.post("/updatePassword", validateJwt, updatePassword);
 
 
-
 router.get("/logout", logout);
-
 
 
 router.post("/register", register);
